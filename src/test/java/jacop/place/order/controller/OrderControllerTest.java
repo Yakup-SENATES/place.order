@@ -12,32 +12,26 @@ import jacop.place.order.enums.OrderStatus;
 import jacop.place.order.model.OrderDTO;
 import jacop.place.order.model.OrderItem;
 import jacop.place.order.model.OrderLineDTO;
-import jacop.place.order.model.PlaceOrderCommand;
-import jacop.place.order.repo.OrderRepository;
-import jacop.place.order.repo.OutboxRepository;
-import jacop.place.order.repo.ProductRepository;
+import jacop.place.order.model.PlaceOrderResult;
 import jacop.place.order.service.OrderService;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-@AutoConfigureMockMvc
-@WebMvcTest
+@WebMvcTest(OrderController.class)
 class OrderControllerTest {
 
     @Autowired
@@ -49,13 +43,7 @@ class OrderControllerTest {
     ObjectMapper objectMapper;
 
     @MockitoBean
-    ProductRepository productRepository;
-    @MockitoBean
     OrderService orderService;
-    @MockitoBean
-    OrderRepository orderRepository;
-    @MockitoBean
-    OutboxRepository outboxRepository;
 
     List<OrderItem> items;
     List<OrderDTO> orderDTOS;
@@ -99,31 +87,25 @@ class OrderControllerTest {
     }
 
     @Test
-    void getOrders_shouldFindAllOrders() throws Exception {
+    void placeOrder_shouldReturnCreated() throws Exception {
 
-        when(orderRepository.findAll()).thenReturn(orders);
+        when(orderService.placeOrder(any())).thenReturn(
+                new PlaceOrderResult(uuid, OrderStatus.CREATED)
+        );
 
-        mockMvc.perform(get("/api/orders"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(gson.toJson(orders)));
 
-    }
-
-    @Test
-    @DisplayName("place when given items is valid")
-    void placeOrder_shouldFail_whenInSufficientStock() {
-        // given
-        when(productRepository.findForUpdate(product.getId())).thenReturn(Optional.of(product));
-        var cmd = new PlaceOrderCommand("idem-2", items);
-
-        //when
-        assertThrows(IllegalStateException.class, () -> orderService.placeOrder(cmd));
-
-        //then
-        verify(orderRepository, never()).save(any());
-        verify(outboxRepository, never()).save(any());
+        mockMvc.perform(
+                        post("/api/orders")
+                                .header("Idempotency-Key", "idem-123")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(gson.toJson(items))
+                )
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.orderId").value(uuid.toString()))
+                .andExpect(jsonPath("$.status").value("CREATED"));
 
     }
+
 
 
 }

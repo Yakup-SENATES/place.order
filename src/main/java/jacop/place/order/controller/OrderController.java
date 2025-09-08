@@ -1,7 +1,5 @@
 package jacop.place.order.controller;
 
-import jacop.place.order.entity.Order;
-import jacop.place.order.model.OrderDTO;
 import jacop.place.order.model.OrderItem;
 import jacop.place.order.model.PlaceOrderCommand;
 import jacop.place.order.model.PlaceOrderResult;
@@ -22,7 +20,7 @@ public class OrderController {
 
 
     @PostMapping
-    public ResponseEntity<PlaceOrderResult> place(
+    public ResponseEntity<PlaceOrderResult> placeOrder(
             @RequestHeader("Idempotency-Key") String idemKey,
             @RequestBody List<OrderItem> items) throws JSONException {
 
@@ -31,10 +29,5 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<Order> getAllOrders() {
-        return orderService.findAllOrders();
-    }
 
 }

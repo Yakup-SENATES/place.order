@@ -1,0 +1,17 @@
+1) İş Problemi (net tanım)
+	•	Use-case: “Sipariş oluştur (Place Order)”
+	•	Koşullar:
+	•	Stok asla negatife düşmemeli (overselling yok).
+	•	İşlem idempotent olmalı (aynı istek tekrar gelirse ikinci kez işlem yapılmamalı).
+	•	Başarılı siparişlerde domain event üretilmeli (OrderPlaced).
+	•	Refactor edilebilir, testlenebilir, genişlemeye açık (SOLID, OOP).
+
+
+	2) Mimari Yaklaşım (hexagonal/DDD light)
+    	•	domain: Product, Order, OrderLine + domain policy (stok düşürme).
+    	•	application: OrderService (use-case orkestra eder), PlaceOrderCommand, PlaceOrderResult.
+    	•	infrastructure: JPA repository’ler, Outbox tablosu, (opsiyonel) Kafka publisher.
+    	•	inbound adapter: REST Controller.
+    	•	outbound adapter: OutboxPublisher (DB → Message broker).
+
+    Not: Live coding süresinde “çalışır ve doğru” çözüm için PESSIMISTIC_WRITE kilitleme + Outbox saklayacağız. (Exactly-once/EO ingilizcesi: outbox + transaction.)

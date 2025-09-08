@@ -18,10 +18,12 @@ public interface OrderMapper {
     @Mapping(target = "orderLines.order", ignore = true)
     List<OrderDTO> getOrderDtos(List<Order> all);
 
-    @Mapping(target = "order", ignore = true)
+    /*@Mapping(target = "order", ignore = true)
     OrderLineDTO getOrderLineDto(OrderLine orderLine);
 
     @Mapping(target = "order", ignore = true)
     List<OrderLineDTO> getOrderLineDtos(List<OrderLine> orderLines);
 
+
+     */
 }

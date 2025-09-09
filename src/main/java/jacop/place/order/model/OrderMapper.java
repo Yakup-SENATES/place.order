@@ -1,7 +1,6 @@
 package jacop.place.order.model;
 
 import jacop.place.order.entity.Order;
-import jacop.place.order.entity.OrderLine;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

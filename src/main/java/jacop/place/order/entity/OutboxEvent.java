@@ -31,9 +31,8 @@ public class OutboxEvent {
     protected OutboxEvent() {
     }
 
-    public OutboxEvent( String type, String aggregatedId, String payload) {
+    public OutboxEvent( String type, String payload) {
         this.type = type;
-        this.aggregatedId = aggregatedId;
         this.payload = payload;
     }
 }

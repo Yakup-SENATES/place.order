@@ -1,7 +1,5 @@
 # place.order
 
-# deploy status
-![CI](https://github.com/Yakup-SENATES/place.order/actions/workflows/ci.yml/badge.svg)
 
 This project demonstrates a basic order placement flow for a modern e-commerce system, following Test Driven Development (TDD) principles.
 
@@ -53,6 +51,10 @@ Feel free to fork the repo and open pull requests.
 - Add new test scenarios and edge cases
 - Improve or extend the outbox event flow
 - Expand order details
+
+# Deploy Status
+![CI](https://github.com/Yakup-SENATES/place.order/actions/workflows/ci.yml/badge.svg)
+
 
 ## License
 
